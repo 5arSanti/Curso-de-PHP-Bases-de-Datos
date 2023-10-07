@@ -1,0 +1,19 @@
+{
+    "name": "santiari/php-bases-de-datos",
+    "description": "Proyecto del curso del conexion de PHP con Bases de Datos",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "5arSanti",
+            "email": "santiari05@hotmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\": "database/"
+        }
+    },
+    "require": {}
+}
