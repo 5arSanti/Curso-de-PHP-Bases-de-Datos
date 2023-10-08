@@ -31,8 +31,11 @@ use App\Enums\WithdrawalTypeEnum;
     // $withdrawal_controller->index();
 
 
-    $withdrawal_controller = new WithdrawalsController();
-    $withdrawal_controller->show(1);
+    // $withdrawal_controller = new WithdrawalsController();
+    // $withdrawal_controller->show(1);
 
     // $incomes_controller = new IncomesController();
     // $incomes_controller->index();
+
+    $incomes_controller = new IncomesController();
+    $incomes_controller->destroy(1);

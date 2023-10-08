@@ -17,9 +17,8 @@
             $stmt = $this->connection->prepare("SELECT * FROM incomes");
             $stmt->execute();
 
-            while($row = $stmt->fetch()) {
-                echo "Ganaste " . $row["amount"] . "$ en " . $row["description"] . "\n";
-            }
+            $results = $stmt->fetchAll();
+            require("../resources/views/incomes/index.php");
 
         }
 
@@ -27,7 +26,7 @@
          * Muestra un formulario para crear un nuevo recurso
          */
         public function create() {
-
+            require("../resources/views/incomes/create.php");
         }
 
         /**
@@ -43,13 +42,17 @@
             $stmt->bindValue(":description", $data["description"]);
 
             $stmt->execute();
+            header("location: incomes");
         }
 
         /**
          * Muestra un unico recurso especificado
          */
-        public function show() {
-
+        public function show($id) {
+            $stmt = $this->connection->prepare("SELECT * FROM incomes WHERE id=:id");
+            $stmt->execute([
+                ":id" => $id
+            ]);
         }
 
         /**
@@ -62,15 +65,43 @@
         /**
          * Actualiza un recurso especifico en la base de datos
          */
-        public function update() {
-
+        public function update($id, $data) {
+            $stmt = $this->connection->prepare("UPDATE incomes SET 
+                payment_method=:payment_method,
+                type=:type,
+                date=:date,
+                amount=:amount,
+                description=:description
+                WHERE id=:id
+            ");
+            $stmt->execute([
+                ":id" => $id,
+                ":payment_method" => $data["payment_method"],
+                ":type" => $data["type"],
+                ":date" => $data["date"],
+                ":amount" => $data["amount"],
+                ":description" => $data["description"]
+            ]);
         }
 
         /**
          * Elimina un recurso especifico
          */
-        public function destroy() {
+        public function destroy($id) {
+            // $this->connection->beginTransaction();
 
+            $stmt = $this->connection->prepare("DELETE FROM incomes WHERE id=:id");
+            $stmt->execute([
+                ":id" => $id
+            ]);
+
+            // $sure = readline("Seguro quieres eliminar este registro?");
+
+            // if ($sure == "no" || $sure == "n") {
+            //     $this->connection->rollback();
+            // } else {
+            //     $this->connection->commit();
+            // }
         }
         
     }

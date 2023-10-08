@@ -80,15 +80,42 @@
         /**
          * Actualiza un recurso especifico en la base de datos
          */
-        public function update() {
-
+        public function update($id, $data) {
+            $stmt = $this->connection->prepare("UPDATE withdrawals SET 
+                payment_method=:payment_method,
+                type=:type,
+                date=:date,
+                amount=:amount,
+                description=:description
+                WHERE id=:id
+            ");
+            $stmt->execute([
+                ":id" => $id,
+                ":payment_method" => $data["payment_method"],
+                ":type" => $data["type"],
+                ":date" => $data["date"],
+                ":amount" => $data["amount"],
+                ":description" => $data["description"]
+            ]);
         }
 
         /**
          * Elimina un recurso especifico
          */
-        public function destroy() {
+        public function destroy($id) {
+            // $this->connection->beginTransaction();
 
+            $stmt = $this->connection->prepare("DELETE FROM withdrawals WHERE id=:id");
+            $stmt->execute([
+                ":id" => $id
+            ]);
+
+            // $sure = readline("Seguro quieres confirmar la transaccion? ");
+            // if ($sure == "no" || $sure == "n") {
+            //     $this->connection->rollback();
+            // } else {
+            //     $this->connection->commit();
+            // }
         }
         
     }
