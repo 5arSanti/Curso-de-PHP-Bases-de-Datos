@@ -5,12 +5,34 @@
     use Database\PDO\Connection;
 
     class WithdrawalsController {
+        private $connection;
+        public function __construct(){
+            $this->connection = Connection::getInstance()->get_database_instance();
+        }
 
         /**
          * Muestra una lista de este recurso
          */
         public function index() {
+            //------------------------------------------------------------------------------------
+            $stmt = $this->connection->prepare("SELECT * FROM withdrawals");
+            $stmt->execute();
 
+            $results = $stmt->fetchAll();
+            foreach($results as $result) {
+                echo "Gastaste " . $result['amount'] . "$ en ". $result['description'] . "\n";
+            }
+
+            //------------------------------------------------------------------------------------
+            // Esto es usando Fetch Column
+            // $stmt = $this->connection->prepare("SELECT amount, description FROM withdrawals");
+            // $stmt->execute();
+
+            // $results = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+            // foreach($results as $result) {
+            //     echo "Gastaste $result$ \n";
+            // }
+            //------------------------------------------------------------------------------------
         }
 
         /**
@@ -24,23 +46,28 @@
          * Guarda un nuevo recurso en la base de datos
          */
         public function store($data) {
-            $connection = Connection::getInstance()->get_database_instance();
+            $stmt = $this->connection->prepare("INSERT INTO withdrawals (payment_method, type, date, amount, description) VALUES (:payment_method, :type, :date, :amount, :description)");
 
-            $affected_rows = $connection->exec("INSERT INTO withdrawals (payment_method, type, date, amount, description) VALUES (
-                {$data["payment_method"]},
-                {$data["type"]},
-                '{$data["date"]}',
-                {$data["amount"]},
-                '{$data["description"]}'
-            )");
-            echo "Se han insertado $affected_rows filas en la base de datos";
+            $stmt->bindValue(":payment_method", $data["payment_method"]);
+            $stmt->bindValue(":type", $data["type"]);
+            $stmt->bindValue(":date", $data["date"]);
+            $stmt->bindValue(":amount", $data["amount"]);
+            $stmt->bindValue(":description", $data["description"]);
+
+            $stmt->execute();
         }
 
         /**
          * Muestra un unico recurso especificado
          */
-        public function show() {
-
+        public function show($id) {
+            $stmt = $this->connection->prepare("SELECT * FROM withdrawals WHERE id=:id");
+            $stmt->execute([
+                ":id" => $id
+            ]);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // var_dump($result);
+            echo "El registro con id $id dice que te gastaste {$result['amount']}$ en {$result['description']}";
         }
 
         /**
